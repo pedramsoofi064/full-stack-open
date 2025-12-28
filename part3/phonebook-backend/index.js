@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 app.use(express.json());
+app.use(express.static('dist'))
+
 
 morgan.token("req-body", function (req, res) {
   if (!req.body) return "";
@@ -61,10 +63,10 @@ app.get("/api/persons/:id", (request, response) => {
 app.delete("/api/persons/:id", (request, response) => {
   const { id } = request.params;
 
-  const person = persons.find((item) => item.id === id);
+  
+  const person = persons.find((item) => item.id == id);
   if (!person) return response.status(404).end();
-  persons = persons.filter((item) => item.id !== id);
-
+  persons = persons.filter((item) => item.id != id);  
   response.status(202).end(0);
 });
 
