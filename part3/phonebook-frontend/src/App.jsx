@@ -9,8 +9,8 @@ import personsServices from "./services/persons";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filteredPersons, setFilteredPersons] = useState(persons);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   const showNotification = (message, type) => {
     setMessage(message);
@@ -18,7 +18,7 @@ const App = () => {
 
     if (!message) return;
     setTimeout(() => {
-      showNotification('', '');
+      showNotification("", "");
     }, 5_000);
   };
 
@@ -28,6 +28,9 @@ const App = () => {
       .then((response) => {
         showNotification(`Added ${newName}`, "success");
         setPersons(persons.concat(response.data));
+      })
+      .catch((e) => {
+        showNotification(e.response.data.error, "error");
       });
   };
 
@@ -69,7 +72,7 @@ const App = () => {
         setPersons(newPersons);
       })
       .catch((e) => {
-        console.log(e);
+        showNotification(e.response.data.error, "error");
       });
   };
 

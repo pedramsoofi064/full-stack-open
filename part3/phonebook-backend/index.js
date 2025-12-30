@@ -67,11 +67,6 @@ app.delete("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response, next) => {
   const { name, number } = request.body;
 
-  if (!name || !number)
-    response.status(400).send({
-      error: "name or number are missed",
-    });
-
   const person = new Phonebook({
     name,
     number,
@@ -79,7 +74,6 @@ app.post("/api/persons", (request, response, next) => {
 
   person
     .save()
-    .then((res) => res.toJSON())
     .then((savedPerson) => {
       response.json(savedPerson);
     })
@@ -109,12 +103,14 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+  console.error(error.message)
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
-  next(error);
-};
+  next(error)
+}
 
 app.use(errorHandler);
 
