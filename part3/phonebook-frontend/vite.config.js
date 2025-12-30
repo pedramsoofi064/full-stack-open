@@ -6,7 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/': {
-        target: 'https://full-stack-open-part3-iiyt.onrender.com',
+        // target: 'https://full-stack-open-part3-iiyt.onrender.com',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       }
     }
