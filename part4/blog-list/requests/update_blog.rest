@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/69557806e9f6c6b5b5abb69d
+Content-Type: application/json
+
+{
+  "title": "***Some Title****",
+  "author": "testPedram",
+  "url": "https://google.com",
+  "likes": "50"
+}
