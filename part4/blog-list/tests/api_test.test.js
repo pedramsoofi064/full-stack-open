@@ -46,38 +46,106 @@ describe('viewing a specific blog and creating one', () => {
             .body.length
 
         assert.equal(blogsLengthAfter, blogsLengthBefore + 1)
-        
+
     })
 })
 
-test('if likes property missed, it will consider as 0', async () => {
-  await Blog.deleteMany({})
 
-  const blog = {
-    title: 'another Title Two',
-    author: 'another title',
-    url: 'https://test.com',
-  }
-  await api
-    .post('/api/blogs')
-    .send(blog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('test default value consideration', () => {
+    test('if likes property missed, it will consider as 0', async () => {
+        await Blog.deleteMany({})
 
-  const blogs = (await api.get('/api/blogs')).body
-  assert.equal(blogs[0].likes , 0)
+        const blog = {
+            title: 'another Title Two',
+            author: 'another title',
+            url: 'https://test.com',
+        }
+        await api
+            .post('/api/blogs')
+            .send(blog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const blogs = (await api.get('/api/blogs')).body
+        assert.equal(blogs[0].likes, 0)
+    })
 })
 
-test('if url or title missed, it returns 400 error', async () => {
-  const blog = {
-    author: 'test author',
-  }
-  await api
-    .post('/api/blogs')
-    .send(blog)
-    .expect(400)
+
+
+describe('test error scenarios', () => {
+    test('if url or title missed, it returns 400 error', async () => {
+        const blog = {
+            author: 'test author',
+        }
+        await api
+            .post('/api/blogs')
+            .send(blog)
+            .expect(400)
+
+    })
+})
+
+describe('creating and deleting new blog', () => {
+    const blog = {
+        title: 'another Title',
+        author: 'some author',
+        url: 'https://test.com',
+        likes: 222
+    }
+
+
+    test('create and delete blog and try again', async () => {
+        const response = await api
+            .post('/api/blogs')
+            .send(blog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        assert.notEqual(response.body.id, null)
+
+        blog.id = response.body.id;
+
+        await api.delete('/api/blogs/' + blog.id).expect(204)
+        await api.delete('/api/blogs/' + blog.id).expect(404)
+    })
 
 })
+
+describe('creating and deleting new blog', () => {
+    const blog = {
+        title: 'another Title',
+        author: 'some author',
+        url: 'https://test.com',
+        likes: 222
+    }
+
+
+    test('create and edit blog', async () => {
+        const response = await api
+            .post('/api/blogs')
+            .send(blog)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        assert.notEqual(response.body.id, null)
+
+        blog.id = response.body.id;
+        const editedBlog = {
+            title: 'edited title',
+            author: 'some author',
+            url: 'https://test.com',
+            likes: 22
+        }
+
+        const updateResponse = await api.put('/api/blogs/' + blog.id).send(editedBlog).expect(200);
+        const updatedBlog = await api.get('/api/blogs/' + blog.id)
+        assert.deepStrictEqual(updateResponse.body, updatedBlog.body)
+
+    })
+
+})
+
 
 after(() => {
     mongoose.connection.close()
