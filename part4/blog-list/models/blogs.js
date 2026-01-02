@@ -1,11 +1,5 @@
 const mongoose = require('mongoose')
 
-const MONGO_URL = process.env.MONGODB_URI
-
-mongoose.set('strictQuery', false)
-
-mongoose.connect(MONGO_URL, { family: 4 })
-
 const blogSchema = mongoose.Schema({
   title: {
     type: String,
