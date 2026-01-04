@@ -1,0 +1,18 @@
+
+.message {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: lightgray;
+  border: 5px solid transparent;
+  margin-bottom: 1rem;
+  font-size: 20px;
+}
+
+.message.error {
+  color: red;
+  border-color: red;
+}
+.message.success {
+  color: green;
+  border-color: green;
+}
