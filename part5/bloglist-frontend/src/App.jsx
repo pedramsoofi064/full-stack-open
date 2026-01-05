@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import LoginForm from "./components/loginForm";
 import NewBlogFrom from "./components/newBlogForm";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
+
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -11,6 +13,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const blogFormRef = useRef();
 
   const showNotification = (message, type) => {
     setMessage(message);
@@ -34,6 +37,7 @@ const App = () => {
 
   const getBlogs = async () => {
     const response = await blogService.getAll();
+    response.sort((a, b) => b.likes - a.likes);
     setBlogs(response);
   };
 
@@ -64,9 +68,47 @@ const App = () => {
         `a new Blog ${response.title} by ${response.author} added`,
         "success"
       );
-    } catch (error){
+      blogFormRef.current.toggleVisibility();
+    } catch (error) {
       console.log(error);
-      showNotification(error.response.data.error, "error");
+      showNotification(error?.response?.data?.error, "error");
+    }
+  };
+
+  const handleAddLike = async (blog) => {
+    try {
+      const copyOfBlog = { ...blog };
+      copyOfBlog.likes++;
+      await blogService.edit(copyOfBlog);
+      const newBlogs = blogs
+        .map((item) => {
+          if (item.id === blog.id) {
+            item.likes++;
+            return item;
+          }
+          return item;
+        })
+        .sort((a, b) => b.likes - a.likes);
+      setBlogs(newBlogs);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleRemoveBlog = async (blog) => {
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    );
+    if (!confirm) return;
+
+    try {
+      await blogService.remove(blog.id);
+      const newBlogs = blogs
+        .filter((item) => item.id !== blog.id)
+        .sort((a, b) => b.likes - a.likes);
+      setBlogs(newBlogs);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -88,9 +130,16 @@ const App = () => {
       <p>
         {user.name} logged in. <button onClick={handleLogOut}>logout</button>
       </p>
-      <NewBlogFrom handleSubmit={handleCreateNewBlog}></NewBlogFrom>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <NewBlogFrom handleSubmit={handleCreateNewBlog}></NewBlogFrom>
+      </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          addLike={() => handleAddLike(blog)}
+          removeBlog={() => handleRemoveBlog(blog)}
+        />
       ))}
     </div>
   );

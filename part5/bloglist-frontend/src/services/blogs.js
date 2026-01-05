@@ -17,4 +17,17 @@ const create = async (data) => {
   return response.data
 }
 
-export default { getAll, setToken, create }
+const edit = async (data) => {
+  const url = `${baseUrl}/${data.id}`
+  const response = await axios.put(url, data, headerConfig)
+  return response.data
+}
+
+
+const remove = async (id) => {
+  const url = `${baseUrl}/${id}`
+  const response = await axios.delete(url, headerConfig);
+  return response
+}
+
+export default { getAll, setToken, create, edit ,remove}
