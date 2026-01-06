@@ -63,7 +63,7 @@ const App = () => {
   const handleCreateNewBlog = async ({ author, title, url }) => {
     try {
       const response = await blogService.create({ author, title, url });
-      setBlogs(blogs.concat(response));
+      await getBlogs();
       showNotification(
         `a new Blog ${response.title} by ${response.author} added`,
         "success"
