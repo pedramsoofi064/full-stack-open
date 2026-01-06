@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
-import LoginForm from "./components/loginForm";
-import NewBlogFrom from "./components/newBlogForm";
+import LoginForm from "./components/LoginForm";
+import NewBlogFrom from "./components/NewBlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 

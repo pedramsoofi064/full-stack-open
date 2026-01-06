@@ -3,7 +3,7 @@ const baseUrl = '/api/blogs'
 
 const headerConfig = {
   headers: {
-    Authorization: ""
+    Authorization: ''
   }
 }
 const setToken = userToken => headerConfig.headers.Authorization = `bearer ${userToken}`
@@ -26,8 +26,8 @@ const edit = async (data) => {
 
 const remove = async (id) => {
   const url = `${baseUrl}/${id}`
-  const response = await axios.delete(url, headerConfig);
+  const response = await axios.delete(url, headerConfig)
   return response
 }
 
-export default { getAll, setToken, create, edit ,remove}
+export default { getAll, setToken, create, edit ,remove }
