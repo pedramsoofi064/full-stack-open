@@ -7,6 +7,7 @@ import {
   useParams,
   useNavigate,
 } from "react-router-dom";
+import { useField } from "./hooks";
 
 const Menu = () => {
   const padding = {
@@ -94,21 +95,29 @@ const Footer = () => (
 
 const CreateNew = (props) => {
   const navigate = useNavigate();
-
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const content = useField("text");
+  const author = useField("text");
+  const info = useField("text");
+  // const [content, setContent] = useState("");
+  // const [author, setAuthor] = useState("");
+  // const [info, setInfo] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
     navigate("/");
-    
+  };
+
+  const handleReset = (e) => {
+    e.preventDefault();
+    content.reset();
+    info.reset();
+    author.reset();
   };
 
   return (
@@ -118,28 +127,25 @@ const CreateNew = (props) => {
         <div>
           content
           <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={content.value}
+            onChange={content.onChange}
+            type={content.type}
           />
         </div>
         <div>
           author
           <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={author.value}
+            onChange={author.onChange}
+            type={author.type}
           />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          <input value={info.value} onChange={info.onChange} type={info.type} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button onClick={handleReset}>reset</button>
       </form>
     </div>
   );
@@ -170,7 +176,7 @@ const App = () => {
     setAnecdotes(anecdotes.concat(anecdote));
     setNotification(`a new anecdote ${anecdote.content} created!`);
     setTimeout(() => {
-      setNotification('')
+      setNotification("");
     }, 5_000);
   };
 
